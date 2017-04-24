@@ -12,5 +12,8 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
+
+Route::get('category/{id}', 'CategoriesController@show');
+Route::get('news/{id}', 'NewsController@show');
