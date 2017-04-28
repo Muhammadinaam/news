@@ -14,6 +14,10 @@
 
 <style type="text/css">
 
+.navbar {
+  border-radius: 0px;
+}
+
 	.navbar-default {
   background-color: #bb1919;
   border-color: #a91717;
@@ -89,10 +93,24 @@
 
 <body>
 
+  
+    <table style="width: 100%;">
+      <tr>
+        <td style="width: 10%;"><img style="width: 100%; min-width: 100px;" src="{{asset('images/logo.jpg')}}"></td>
+        <td style="width: 90%; background-color: #bb1919; color: white; padding: 10px;">
+
+          <h3>
+            <marquee>پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ </marquee>
+          </h3>
+        </td>
+      </tr>
+    </table>
+  
+
 	<nav class="navbar navbar-default">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="#">News</a>
+				<a class="navbar-brand" href="#"></a>
 			</div>
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="{{url('')}}">پہلا صفحہ</a></li>
