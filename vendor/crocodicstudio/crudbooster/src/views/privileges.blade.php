@@ -1,7 +1,7 @@
 @extends('crudbooster::admin_template')
 
 @section('content')
-	
+
     <div  style="width:750px;margin:0 auto ">
  			
 			
@@ -138,6 +138,71 @@
 								@endforeach
 							</tbody>
 						</table>
+
+						<br>
+
+						<div class='form-group'>
+							<label>Other Permissions</label>
+
+							@php
+								$permissions = ['Access to own entries only'];
+
+								if(isset($row))
+								{
+									
+									$other_permissions_table = \DB::table('other_permissions')
+															->where('cms_privilege_id', $row->id)
+															->get();
+
+								}
+							@endphp
+
+							<table class="table table-bordered">
+								<thead>
+									<tr class="active">
+										<th class="col-md-10">Permission</th>
+										<th class="col-md-2 text-center">Yes/No</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach($permissions as $permission)
+
+									@php
+										$checked = false;
+
+										if(isset($other_permissions_table))
+										{
+
+
+											if( count( $other_permissions_table->where('title', $permission)->all() ) > 0 )
+											{
+												$checked = true;
+											}
+										}
+
+									@endphp
+
+									<tr>
+										<td>{{$permission}}</td>
+										<td class="text-center">
+											<input type="checkbox" 
+												name="other_permissions[]" 
+												value="{{$permission}}"
+												{{ $checked ? 'checked' : '' }}
+												>
+										</td>
+									</tr>
+									@endforeach		
+								</tbody>
+							</table>
+
+							
+
+						</div>
+
+
+
+
 
 					</div>
 

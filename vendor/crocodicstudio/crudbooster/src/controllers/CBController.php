@@ -991,6 +991,11 @@ class CBController extends Controller {
 		    $this->arr['created_at'] = date('Y-m-d H:i:s');
 		}
 
+		if(Schema::hasColumn($this->table, 'created_by'))
+		{
+		    $this->arr['created_by'] = Auth::user()->id;
+		}
+
 		$this->hook_before_add($this->arr);
 
 		$this->arr[$this->primary_key] = $id = CRUDBooster::newId($this->table);		
@@ -1124,6 +1129,11 @@ class CBController extends Controller {
 		if (Schema::hasColumn($this->table, 'updated_at'))
 		{
 		    $this->arr['updated_at'] = date('Y-m-d H:i:s');
+		}
+
+		if(Schema::hasColumn($this->table, 'updated_by'))
+		{
+		    $this->arr['updated_by'] = Auth::user()->id;
 		}
 
 		$this->hook_before_edit($this->arr,$id);		
