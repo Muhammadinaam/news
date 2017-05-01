@@ -12,7 +12,7 @@
 
 
     		@foreach($news_paginated as $news)
-    		<div class="col-md-6">
+    		<div class="col-md-3">
 
     			<a href="{{url('news').'/'.$news->id}}">
     				<img style="width: 100%;" src="{{asset($news->image)}}">
