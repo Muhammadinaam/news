@@ -59,7 +59,9 @@ class PrivilegesController extends CBController {
 			DB::raw("(select is_create from cms_privileges_roles where id_cms_moduls  = cms_moduls.id and id_cms_privileges = '$id') as is_create"),
 			DB::raw("(select is_read from cms_privileges_roles where id_cms_moduls    = cms_moduls.id and id_cms_privileges = '$id') as is_read"),
 			DB::raw("(select is_edit from cms_privileges_roles where id_cms_moduls    = cms_moduls.id and id_cms_privileges = '$id') as is_edit"),
-			DB::raw("(select is_delete from cms_privileges_roles where id_cms_moduls  = cms_moduls.id and id_cms_privileges = '$id') as is_delete")
+			DB::raw("(select is_delete from cms_privileges_roles where id_cms_moduls  = cms_moduls.id and id_cms_privileges = '$id') as is_delete"),
+			DB::raw("(select is_own_only from cms_privileges_roles where id_cms_moduls  = cms_moduls.id and id_cms_privileges = '$id') as is_own_only"),
+			DB::raw("(select is_publish from cms_privileges_roles where id_cms_moduls  = cms_moduls.id and id_cms_privileges = '$id') as is_publish")
 			)
 		->orderby("name","asc")->get();		
 		$data['page_menu'] = Route::getCurrentRoute()->getActionName();
@@ -96,6 +98,8 @@ class PrivilegesController extends CBController {
 				$arrs['is_read'] = @$data['is_read']?:0;
 				$arrs['is_edit'] = @$data['is_edit']?:0;
 				$arrs['is_delete'] = @$data['is_delete']?:0;
+				$arrs['is_own_only'] = @$data['is_own_only']?:0;
+				$arrs['is_publish'] = @$data['is_publish']?:0;
 				$arrs['id_cms_privileges'] = $id;
 				$arrs['id_cms_moduls'] = $id_modul;			
 				DB::table("cms_privileges_roles")->insert($arrs);
@@ -126,7 +130,7 @@ class PrivilegesController extends CBController {
 		$roles = DB::table('cms_privileges_roles')
 		->where('id_cms_privileges',CRUDBooster::myPrivilegeId())
 		->join('cms_moduls','cms_moduls.id','=','id_cms_moduls')
-		->select('cms_moduls.name','cms_moduls.path','is_visible','is_create','is_read','is_edit','is_delete')
+		->select('cms_moduls.name','cms_moduls.path','is_visible','is_create','is_read','is_edit','is_delete', 'is_own_only', 'is_publish')
 		->get();
 		Session::put('admin_privileges_roles',$roles);
 
@@ -186,6 +190,8 @@ class PrivilegesController extends CBController {
 				$arrs['is_read'] = @$data['is_read']?:0;
 				$arrs['is_edit'] = @$data['is_edit']?:0;
 				$arrs['is_delete'] = @$data['is_delete']?:0;
+				$arrs['is_own_only'] = @$data['is_own_only']?:0;
+				$arrs['is_publish'] = @$data['is_publish']?:0;
 				$arrs['id_cms_privileges'] = $id;
 				$arrs['id_cms_moduls'] = $id_modul;			
 				DB::table("cms_privileges_roles")->insert($arrs);
@@ -218,7 +224,7 @@ class PrivilegesController extends CBController {
 			$roles = DB::table('cms_privileges_roles')
 			->where('id_cms_privileges',CRUDBooster::myPrivilegeId())
 			->join('cms_moduls','cms_moduls.id','=','id_cms_moduls')
-			->select('cms_moduls.name','cms_moduls.path','is_visible','is_create','is_read','is_edit','is_delete')
+			->select('cms_moduls.name','cms_moduls.path','is_visible','is_create','is_read','is_edit','is_delete', 'is_own_only', 'is_publish')
 			->get();
 			Session::put('admin_privileges_roles',$roles);
 

@@ -30,6 +30,8 @@
 
             <div style="background-color: lightgray" class="col-md-4">
 
+                
+
                 <h2>{{$news->category->title}} میں مزید </h2>
                 <hr>
 

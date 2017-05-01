@@ -168,6 +168,30 @@ class CRUDBooster  {
 			}
 		}
 
+		public static function isOwnOnly() {		
+			if(self::isSuperadmin()) return false;	
+
+			$session = Session::get('admin_privileges_roles');
+
+
+			foreach ($session as $v) {
+				if($v->path == self::getModulePath()) {
+					return (bool) $v->is_own_only;
+				}
+			}
+		}
+
+		public static function isPublish() {		
+			if(self::isSuperadmin()) return true;	
+
+			$session = Session::get('admin_privileges_roles');
+			foreach ($session as $v) {
+				if($v->path == self::getModulePath()) {
+					return (bool) $v->is_publish;
+				}
+			}
+		}
+
 		public static function isCRUD() {		
 			if(self::isSuperadmin()) return true;
 

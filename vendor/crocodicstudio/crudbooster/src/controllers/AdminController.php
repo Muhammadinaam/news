@@ -78,7 +78,7 @@ class AdminController extends CBController {
 			$roles = DB::table('cms_privileges_roles')
 			->where('id_cms_privileges',$users->id_cms_privileges)
 			->join('cms_moduls','cms_moduls.id','=','id_cms_moduls')
-			->select('cms_moduls.name','cms_moduls.path','is_visible','is_create','is_read','is_edit','is_delete')
+			->select('cms_moduls.name','cms_moduls.path','is_visible','is_create','is_read','is_edit','is_delete', 'is_own_only', 'is_publish')
 			->get();
 			
 			$photo = ($users->photo)?asset($users->photo):'https://www.gravatar.com/avatar/'.md5($users->email).'?s=100';

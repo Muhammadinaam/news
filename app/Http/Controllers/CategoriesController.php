@@ -16,6 +16,7 @@ class CategoriesController extends Controller
     	
     	$news_paginated = $category
 						->news()
+                        ->whereNotNull('published_by')
 						->orderBy('news_datetime', 'desc')
 						->paginate(10);
 

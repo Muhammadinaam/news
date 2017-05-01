@@ -5,14 +5,14 @@
 	use DB;
 	use CRUDBooster;
 
-	class AdminArticlesController extends \crocodicstudio\crudbooster\controllers\CBController {
+	class AdminTickersController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
 			$this->title_field = "id";
 			$this->limit = "20";
-			$this->orderby = "article_datetime,desc";
+			$this->orderby = "ticker_datetime,desc";
 			$this->global_privilege = false;
 			$this->button_table_action = true;
 			$this->button_bulk_action = true;
@@ -25,30 +25,29 @@
 			$this->button_filter = true;
 			$this->button_import = false;
 			$this->button_export = false;
-			$this->table = "articles";
+			$this->table = "tickers";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Article Date / Time","name"=>"article_datetime"];
-			$this->col[] = ["label"=>"Title","name"=>"title"];
-			$this->col[] = ["label"=>"Detail","name"=>"detail"];
+			$this->col[] = ["label"=>"Ticker Datetime","name"=>"ticker_datetime"];
+			$this->col[] = ["label"=>"Ticker Text","name"=>"ticker_text"];
 			$this->col[] = ["label"=>"Created By","name"=>"created_by","join"=>"cms_users,name"];
 			$this->col[] = ["label"=>"Published By","name"=>"published_by","join"=>"cms_users,name"];
+			$this->col[] = ["label"=>"Category","name"=>"category_id","join"=>"categories,title"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Article Datetime','name'=>'article_datetime','type'=>'datetime','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Title','name'=>'title','type'=>'text','validation'=>'required|string|min:3|max:1000','width'=>'col-sm-10','placeholder'=>'You can only enter the letter only'];
-			$this->form[] = ['label'=>'Detail','name'=>'detail','type'=>'text','validation'=>'required|min:10|max:2000','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Ticker Datetime','name'=>'ticker_datetime','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Ticker Text','name'=>'ticker_text','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Category','name'=>'category_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'categories,title'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ['label'=>'Article Datetime','name'=>'article_datetime','type'=>'datetime','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Title','name'=>'title','type'=>'text','validation'=>'required|string|min:3|max:1000','width'=>'col-sm-10','placeholder'=>'You can only enter the letter only'];
-			//$this->form[] = ['label'=>'Detail','name'=>'detail','type'=>'text','validation'=>'required|min:10|max:2000','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Ticker Datetime','name'=>'ticker_datetime','type'=>'datetime','validation'=>'required|date_format:Y-m-d H:i:s','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Ticker Text','name'=>'ticker_text','type'=>'text','validation'=>'required|min:1|max:255','width'=>'col-sm-10'];
 			# OLD END FORM
 
 			/* 

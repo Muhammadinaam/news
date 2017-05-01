@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\PDF;
 use Maatwebsite\Excel\Facades\Excel;
+use Auth;
 use CRUDBooster;
 use Schema;
 
@@ -120,6 +121,18 @@ class CBController extends Controller {
 		$this->data['parent_field'] 		 = (g('parent_field'))?:$this->parent_field;
 		$this->data['parent_id'] 		 	 = (g('parent_id'))?:$this->parent_id;
 
+
+		//publish  / unpublish bulk action
+		if(Schema::hasColumn($this->table, 'published_by'))
+		{
+			if(CRUDBooster::isPublish())
+			{
+				$this->data['button_selected'][] = ['label'=>'Publish','icon'=>'fa fa-check','name'=>'set_publish'];
+				$this->data['button_selected'][] = ['label'=>'Unpublish','icon'=>'fa fa-ban','name'=>'set_unpublish'];
+			}
+		}
+
+
 		if(CRUDBooster::getCurrentMethod() == 'getProfile') {
 			Session::put('current_row_id',CRUDBooster::myId());
 			$this->data['return_url'] = Request::fullUrl();			
@@ -141,6 +154,24 @@ class CBController extends Controller {
 				}
 			}
 		}
+	}
+
+	function getContents($str, $startDelimiter, $endDelimiter) {
+	  $contents = array();
+	  $startDelimiterLength = strlen($startDelimiter);
+	  $endDelimiterLength = strlen($endDelimiter);
+	  $startFrom = $contentStart = $contentEnd = 0;
+	  while (false !== ($contentStart = strpos($str, $startDelimiter, $startFrom))) {
+	    $contentStart += $startDelimiterLength;
+	    $contentEnd = strpos($str, $endDelimiter, $contentStart);
+	    if (false === $contentEnd) {
+	      break;
+	    }
+	    $contents[] = substr($str, $contentStart, $contentEnd - $contentStart);
+	    $startFrom = $contentEnd + $endDelimiterLength;
+	  }
+
+	  return $contents;
 	}
 
 	public function getIndex() {
@@ -191,6 +222,17 @@ class CBController extends Controller {
 			$table_parent = CRUDBooster::parseSqlTable($table_parent)['table'];
 			$result->where($table_parent.'.'.Request::get('foreign_key'),Request::get('parent_id'));
 		}
+
+		//own only rights check
+		if(CRUDBooster::isOwnOnly() == true)
+		{
+			if(Schema::hasColumn($this->table, 'created_by'))
+			{
+
+				$result->where($this->table.'.created_by', CRUDBooster::myId());
+			}
+		}
+		// end - own only rights check
 
 
 		$this->hook_query_index($result);
@@ -326,6 +368,13 @@ class CBController extends Controller {
 					$value = @$fc['value'];
 					$type  = @$fc['type'];
 
+					if($type == 'empty')
+					{
+					  $w->whereNull($key)->orWhere($key,'=', '');
+					  continue;
+					}
+
+
 					if($value=='' || $type=='') continue;
 
 					if($type == 'between') continue;
@@ -371,6 +420,36 @@ class CBController extends Controller {
 				}
 			}
 		}
+
+
+
+		//publish button
+		if(Schema::hasColumn($this->table, 'published_by'))
+		{
+
+			if(CRUDBooster::isPublish())
+			{
+				$this->data['addaction'][] = ['label'=>'Publish','url'=>CRUDBooster::mainpath('set-publish/publish/[id]'),'icon'=>'fa fa-check','color'=>'success','showIf'=>"[published_by] == ''"];
+				$this->data['addaction'][] = ['label'=>'Unpublish','url'=>CRUDBooster::mainpath('set-publish/unpublish/[id]'),'icon'=>'fa fa-ban','color'=>'danger','showIf'=>"[published_by] != ''"];
+
+			}
+		}
+		//publish button
+
+
+		foreach ($this->data['addaction'] as $action_button) {
+			
+			if($action_button['showIf'] != '')
+			{
+				$cols = $this->getContents($action_button['showIf'], '[', ']');
+
+				foreach ($cols as $col) {
+					$result->addselect($this->table . '.' . $col);
+				}
+				
+			}
+		}
+
 
 		if($filter_is_orderby == true) {
 			$data['result']  = $result->paginate($limit);
@@ -527,6 +606,47 @@ class CBController extends Controller {
 		$data['html_contents'] = $html_contents;
 
 		return view("crudbooster::default.index",$data);
+	}
+
+	function getSetPublish($publish, $id)
+	{
+		$this->cbLoader();
+
+		if( !CRUDBooster::isPublish() ) 
+		{
+			CRUDBooster::insertLog(trans('crudbooster.log_try_add',['module'=>CRUDBooster::getCurrentModule()->name ]));
+			CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));	
+		}
+
+		
+		$currentRow = DB::table($this->table)->where('id', $id)->first();
+
+		if( CRUDBooster::isOwnOnly() && 
+			Schema::hasColumn($this->table, 'created_by') && 
+			$currentRow->created_by != CRUDBooster::myId() )
+		{
+			CRUDBooster::insertLog(trans('crudbooster.log_try_add',['module'=>CRUDBooster::getCurrentModule()->name ]));
+			CRUDBooster::redirect(CRUDBooster::adminPath(),trans("crudbooster.denied_access"));	
+		}
+
+		if(Schema::hasColumn($this->table, 'published_by') == true)
+		{
+
+			DB::table($this->table)
+			->where('id', $id)
+			->update([
+				'published_by' => $publish == 'publish' ? CRUDBooster::myId() : null, 
+				]);
+
+			//This will redirect back and gives a message
+			$msg = $publish == 'publish' ? 'Published successfully!' : 'Unpublished!';
+	   		CRUDBooster::redirect($_SERVER['HTTP_REFERER'],$msg,"info");
+	   	}
+	   	else
+	   	{
+	   		//This will redirect back and gives a message
+	   		CRUDBooster::redirect($_SERVER['HTTP_REFERER'],"Table has no column for publish/unpublish state","error");	
+	   	}
 	}
 
 	public function getExportData() {
@@ -993,8 +1113,10 @@ class CBController extends Controller {
 
 		if(Schema::hasColumn($this->table, 'created_by'))
 		{
-		    $this->arr['created_by'] = Auth::user()->id;
+		    $this->arr['created_by'] = CRUDBooster::myId();
 		}
+
+
 
 		$this->hook_before_add($this->arr);
 
@@ -1133,7 +1255,12 @@ class CBController extends Controller {
 
 		if(Schema::hasColumn($this->table, 'updated_by'))
 		{
-		    $this->arr['updated_by'] = Auth::user()->id;
+		    $this->arr['updated_by'] = CRUDBooster::myId();
+		}
+
+		if(Schema::hasColumn($this->table, 'published_by'))
+		{
+			$this->arr['published_by'] = null;
 		}
 
 		$this->hook_before_edit($this->arr,$id);		
@@ -1489,6 +1616,11 @@ class CBController extends Controller {
 		$id_selected = Request::input('checkbox');
 		$button_name = Request::input('button_name');
 
+		if( count($id_selected) == 0 )
+		{
+			return redirect()->back()->with(['message_type'=>'error','message'=>'No item selected']);
+		}
+
 		if($button_name == 'delete') {
 			if(!CRUDBooster::isDelete()) {
 				CRUDBooster::insertLog(trans("crudbooster.log_try_delete_selected",['module'=>CRUDBooster::getCurrentModule()->name]));
@@ -1509,6 +1641,34 @@ class CBController extends Controller {
 			$message = trans("crudbooster.alert_delete_selected_success");
 			return redirect()->back()->with(['message_type'=>'success','message'=>$message]);
 		}
+
+
+
+		if(Schema::hasColumn($this->table, 'published_by') == false)
+		{
+			//This will redirect back and gives a message
+	   		CRUDBooster::redirect($_SERVER['HTTP_REFERER'],"Table has no column for publish/unpublish state","error");	
+	   		return;
+		}
+
+		$query = DB::table($this->table)->whereIn('id',$id_selected);
+
+	    if(CRUDBooster::isOwnOnly())
+	    {
+	    	$query = $query->where('created_by', CRUDBooster::myId());
+	    }
+
+		if($button_name == 'set_publish') {
+		    
+		    $query->update(['published_by'=>CRUDBooster::myId()]);
+		}
+		else if($button_name == 'set_unpublish')
+		{
+			$query->update(['published_by'=>null]);
+		}
+
+
+
 
 		$this->actionButtonSelected($id_selected,$button_name);
 
@@ -1587,6 +1747,8 @@ class CBController extends Controller {
 	}
 
 	public function actionButtonSelected($id_selected,$button_name) {
+
+		
     }
 
 	public function hook_query_index(&$query) {

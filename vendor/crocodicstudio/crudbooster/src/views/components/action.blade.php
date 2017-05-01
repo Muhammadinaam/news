@@ -41,14 +41,21 @@
 
       $query = $a['showIf'];
       
+      
+
       foreach($row as $key=>$val) {
         $query = str_replace("[".$key."]",'"'.$val.'"',$query);
       }
+
+
+      
       
       if(isset($confirmation) && !empty($confirmation))
       {
           $url = "javascript:;";
       }
+
+
 
       @eval("if($query) {
           echo \"<a class='btn btn-xs btn-\$color' title='\$label' onclick='\$confirm_box' href='\$url'><i class='\$icon'></i> $label</a>&nbsp;\";
@@ -116,7 +123,8 @@
                     
                     foreach($row as $key=>$val) {
                       $query = str_replace("[".$key."]",'"'.$val.'"',$query);
-                    }              
+                    }  
+
 
                     @eval("if($query) {
                         echo \"<li><a title='\$label' href='\$url'><i class='\$icon'></i> \$label</a></li>\";

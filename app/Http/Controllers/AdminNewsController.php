@@ -35,6 +35,8 @@
 			$this->col[] = ["label"=>"Heading","name"=>"heading"];
 			$this->col[] = ["label"=>"Detail","name"=>"detail"];
 			$this->col[] = ["label"=>"Image","name"=>"image","image"=>true];
+			$this->col[] = ["label"=>"Created By","name"=>"created_by","join"=>"cms_users,name"];
+			$this->col[] = ["label"=>"Published By","name"=>"published_by","join"=>"cms_users,name"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -48,11 +50,11 @@
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ['label'=>'Category','name'=>'category_id','type'=>'select','validation'=>'required','width'=>'col-sm-9','datatable'=>'categories,title'];
-			//$this->form[] = ['label'=>'News Datetime','name'=>'news_datetime','type'=>'datetime','validation'=>'required|date','width'=>'col-sm-9'];
-			//$this->form[] = ['label'=>'Heading','name'=>'heading','type'=>'text','validation'=>'required|min:1|max:1000','width'=>'col-sm-10','help'=>'File types support : JPG, JPEG, PNG, GIF, BMP'];
+			//$this->form[] = ['label'=>'Category','name'=>'category_id','type'=>'select','validation'=>'required','width'=>'col-sm-10','datatable'=>'categories,title'];
+			//$this->form[] = ['label'=>'News Datetime','name'=>'news_datetime','type'=>'datetime','validation'=>'required|date','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Heading','name'=>'heading','type'=>'text','validation'=>'required|min:1|max:1000','width'=>'col-sm-10'];
 			//$this->form[] = ['label'=>'Detail','name'=>'detail','type'=>'textarea','validation'=>'required|min:1|max:2000','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Image','name'=>'image','type'=>'upload','validation'=>'image|max:3000','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Image','name'=>'image','type'=>'upload','validation'=>'image|max:3000','width'=>'col-sm-10','help'=>'File types support : JPG, JPEG, PNG, GIF, BMP'];
 			# OLD END FORM
 
 			/* 

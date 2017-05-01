@@ -9,6 +9,16 @@
 	<link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript" src="{{asset('js/crawler.js')}}">
+
+    /* Text and/or Image Crawler Script v1.53 (c)2009-2011 John Davenport Scheuer
+       as first seen in http://www.dynamicdrive.com/forums/
+       username: jscheuer1 - This Notice Must Remain for Legal Use
+    */
+
+  </script>
+
 </head>
 
 
@@ -16,11 +26,12 @@
 
 .navbar {
   border-radius: 0px;
+  margin-bottom: 0px;
 }
 
-	.navbar-default {
-  background-color: #bb1919;
-  border-color: #a91717;
+.navbar-default {
+  background-color: #6171e8;
+  border-color: #4c58b6;
 }
 .navbar-default .navbar-brand {
   color: #ecf0f1;
@@ -33,30 +44,50 @@
   color: #ecf0f1;
 }
 .navbar-default .navbar-nav > li > a {
-  color: #ecf0f1;
+  color: white;
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
   color: #ecdbff;
 }
+.navbar-default .navbar-nav > li > .dropdown-menu {
+  background-color: #6171e8;
+}
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a {
+  color: #ecf0f1;
+}
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a:hover,
+.navbar-default .navbar-nav > li > .dropdown-menu > li > a:focus {
+  color: #ecdbff;
+  background-color: #4c58b6;
+}
+.navbar-default .navbar-nav > li > .dropdown-menu > li > .divider {
+  background-color: #4c58b6;
+}
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+.navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+  color: #ecdbff;
+  background-color: #4c58b6;
+}
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
   color: #ecdbff;
-  background-color: #a91717;
+  background-color: #4c58b6;
 }
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
   color: #ecdbff;
-  background-color: #a91717;
+  background-color: #4c58b6;
 }
 .navbar-default .navbar-toggle {
-  border-color: #a91717;
+  border-color: #4c58b6;
 }
 .navbar-default .navbar-toggle:hover,
 .navbar-default .navbar-toggle:focus {
-  background-color: #a91717;
+  background-color: #4c58b6;
 }
 .navbar-default .navbar-toggle .icon-bar {
   background-color: #ecf0f1;
@@ -84,7 +115,7 @@
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
     color: #ecdbff;
-    background-color: #a91717;
+    background-color: #4c58b6;
   }
 }
 
@@ -94,37 +125,87 @@
 <body>
 
   
-    <table style="width: 100%;">
+
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#"></a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li style="font-size: 20px; font-weight: bold;" class="{{Request::url() == url('') ? 'active' : ''}}"><a href="{{url('')}}">پہلا صفحہ</a></li>
+
+        <li style="font-size: 20px; font-weight: bold;" class="{{Request::segment(1) == 'articles'? 'active' : ''}}" ><a href="{{url('articles')}}">آرٹیکلز</a></li>
+
+        @foreach( \App\Category::whereNotNull('published_by')->orderBy('order_on_homepage')->get() as $category )
+        <li style="font-size: 20px; font-weight: bold;" class="{{Request::segment(1) == 'category' && Request::segment(2) == $category->id ? 'active' : ''}}" ><a href="{{url('category/'.$category->id)}}">{{$category->title}}</a></li>
+        @endforeach
+
+      </ul>
+    </div>
+  </nav>
+
+
+    @php
+    $tickers = DB::table('tickers')
+                  ->select('tickers.ticker_text', 'categories.title')
+                  ->join('categories', 'categories.id', '=', 'tickers.category_id')
+                  ->whereNotNull('tickers.published_by')
+                  ->orderBy('ticker_datetime', 'desc')
+                  ->limit(10)
+                  ->get();
+
+    $tickers_html = array();
+
+    
+
+    @endphp
+  
+    <table style="width: 100%;background-color: #6171e8;">
       <tr>
-        <td style="width: 10%;"><img style="width: 100%; min-width: 100px;" src="{{asset('images/logo.jpg')}}"></td>
-        <td style="width: 90%; background-color: #bb1919; color: white; padding: 10px;">
+        <td style="width: 10%;"><img style="width: 100%; min-width: 100px; padding: 5px;" src="{{asset('images/logo.jpg')}}"></td>
+        <td style="width: 90%; color: white; padding: 10px;">
 
           <h3>
-            <marquee>پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ پہلا صفحہ </marquee>
+            <div class="marquee" id="mycrawler">
+
+              @foreach($tickers as $ticker)
+              <small><span>----------------</span></small>
+              <span class="label label-success">{{$ticker->title}}</span>
+                {{$ticker->ticker_text}}
+              <span class="label label-success">{{$ticker->title}}</span>
+              @endforeach
+            </div>
           </h3>
+
+          
+
         </td>
       </tr>
     </table>
+
+  <br>
   
 
-	<nav class="navbar navbar-default">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="#"></a>
-			</div>
-			<ul class="nav navbar-nav">
-				<li class="active"><a href="{{url('')}}">پہلا صفحہ</a></li>
-
-        @foreach( \App\Category::orderBy('order_on_homepage')->get() as $category )
-				<li><a href="{{url('category/'.$category->id)}}">{{$category->title}}</a></li>
-        @endforeach
-
-			</ul>
-		</div>
-	</nav>
-
-
 	@yield('content')
+
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    marqueeInit({
+      uniqueid: 'mycrawler',
+      
+      inc: 5, //speed - pixel increment for each iteration of this marquee's movement
+      mouse: 'cursor driven', //mouseover behavior ('pause' 'cursor driven' or false)
+      moveatleast: 2,
+      neutral: 150,
+      direction: 'right',
+
+    });
+
+  });
+
+</script>  
 
 </body>
 

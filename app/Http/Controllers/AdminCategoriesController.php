@@ -33,6 +33,8 @@
 			$this->col[] = ["label"=>"Title","name"=>"title"];
 			$this->col[] = ["label"=>"Order on Homepage","name"=>"order_on_homepage"];
 			$this->col[] = ["label"=>"No. of News On_homepage","name"=>"news_on_homepage"];
+			$this->col[] = ["label"=>"Created By","name"=>"created_by","join"=>"cms_users,name"];
+			$this->col[] = ["label"=>"Published By","name"=>"published_by","join"=>"cms_users,name"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
@@ -45,6 +47,8 @@
 			# OLD START FORM
 			//$this->form = [];
 			//$this->form[] = ['label'=>'Title','name'=>'title','type'=>'text','validation'=>'required|string|min:3|max:255','width'=>'col-sm-10','placeholder'=>'You can only enter the letter only'];
+			//$this->form[] = ['label'=>'Order On_homepage','name'=>'order_on_homepage','type'=>'number','validation'=>'required|integer','width'=>'col-sm-9'];
+			//$this->form[] = ['label'=>'No. of News On_homepage','name'=>'news_on_homepage','type'=>'number','validation'=>'required|integer','width'=>'col-sm-9'];
 			# OLD END FORM
 
 			/* 

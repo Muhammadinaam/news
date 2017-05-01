@@ -96,6 +96,14 @@
 									var is_ch = $(this).is(':checked');
 									$(".is_delete").prop("checked",is_ch);
 								})
+								$("#is_own_only").click(function() {
+									var is_ch = $(this).is(':checked');
+									$(".is_own_only").prop("checked",is_ch);
+								})
+								$("#is_publish").click(function() {
+									var is_ch = $(this).is(':checked');
+									$(".is_publish").prop("checked",is_ch);
+								})
 								$(".select_horizontal").click(function() {
 									var p = $(this).parents('tr');
 									var is_ch = $(this).is(':checked');
@@ -106,7 +114,9 @@
 						<table class='table table-striped table-hover table-bordered'>
 							<thead>
 								<tr class='active'>
-									<th width='3%'>{{trans('crudbooster.privileges_module_list_no')}}</th><th width='60%'>{{trans('crudbooster.privileges_module_list_mod_names')}}</th><th>&nbsp;</th><th>{{trans('crudbooster.privileges_module_list_view')}}</th><th>{{trans('crudbooster.privileges_module_list_create')}}</th><th>{{trans('crudbooster.privileges_module_list_read')}}</th><th>{{trans('crudbooster.privileges_module_list_update')}}</th><th>{{trans('crudbooster.privileges_module_list_delete')}}</th>
+									<th width='3%'>{{trans('crudbooster.privileges_module_list_no')}}</th><th width='60%'>{{trans('crudbooster.privileges_module_list_mod_names')}}</th><th>&nbsp;</th><th>{{trans('crudbooster.privileges_module_list_view')}}</th><th>{{trans('crudbooster.privileges_module_list_create')}}</th><th>{{trans('crudbooster.privileges_module_list_read')}}</th><th>{{trans('crudbooster.privileges_module_list_update')}}</th><th>{{trans('crudbooster.privileges_module_list_delete')}}</th><th>
+										Access to Own Only
+									</th><th>Publish</th>
 								</tr>
 								<tr class='info'>
 									<th>&nbsp;</th>
@@ -117,6 +127,8 @@
 									<td align="center"><input title='Check all vertical' type='checkbox' id='is_read'/></td>
 									<td align="center"><input title='Check all vertical' type='checkbox' id='is_edit'/></td>
 									<td align="center"><input title='Check all vertical' type='checkbox' id='is_delete'/></td>
+									<td align="center"><input title='Check all vertical' type='checkbox' id='is_own_only'/></td>
+									<td align="center"><input title='Check all vertical' type='checkbox' id='is_publish'/></td>
 								</tr>
 							</thead>
 							<tbody>
@@ -134,72 +146,14 @@
 									<td class='info' align="center"><input type='checkbox' class='is_read' name='privileges[<?=$modul->id?>][is_read]' <?=@$roles->is_read?"checked":""?> value='1'/></td>									
 									<td class='success' align="center"><input type='checkbox' class='is_edit' name='privileges[<?=$modul->id?>][is_edit]' <?=@$roles->is_edit?"checked":""?> value='1'/></td>
 									<td class='danger' align="center"><input type='checkbox' class='is_delete' name='privileges[<?=$modul->id?>][is_delete]' <?=@$roles->is_delete?"checked":""?> value='1'/></td>
+									<td class='danger' align="center"><input type='checkbox' class='is_own_only' name='privileges[<?=$modul->id?>][is_own_only]' <?=@$roles->is_own_only?"checked":""?> value='1'/></td>
+									<td class='danger' align="center"><input type='checkbox' class='is_publish' name='privileges[<?=$modul->id?>][is_publish]' <?=@$roles->is_publish?"checked":""?> value='1'/></td>
 								</tr>
 								@endforeach
 							</tbody>
 						</table>
 
-						<br>
-
-						<div class='form-group'>
-							<label>Other Permissions</label>
-
-							@php
-								$permissions = ['Access to own entries only'];
-
-								if(isset($row))
-								{
-									
-									$other_permissions_table = \DB::table('other_permissions')
-															->where('cms_privilege_id', $row->id)
-															->get();
-
-								}
-							@endphp
-
-							<table class="table table-bordered">
-								<thead>
-									<tr class="active">
-										<th class="col-md-10">Permission</th>
-										<th class="col-md-2 text-center">Yes/No</th>
-									</tr>
-								</thead>
-								<tbody>
-									@foreach($permissions as $permission)
-
-									@php
-										$checked = false;
-
-										if(isset($other_permissions_table))
-										{
-
-
-											if( count( $other_permissions_table->where('title', $permission)->all() ) > 0 )
-											{
-												$checked = true;
-											}
-										}
-
-									@endphp
-
-									<tr>
-										<td>{{$permission}}</td>
-										<td class="text-center">
-											<input type="checkbox" 
-												name="other_permissions[]" 
-												value="{{$permission}}"
-												{{ $checked ? 'checked' : '' }}
-												>
-										</td>
-									</tr>
-									@endforeach		
-								</tbody>
-							</table>
-
-							
-
-						</div>
-
+						
 
 
 
