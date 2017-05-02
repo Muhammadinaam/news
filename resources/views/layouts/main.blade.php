@@ -24,6 +24,12 @@
 
 <style type="text/css">
 
+.panel {
+  -webkit-box-shadow: 0px 0px 65px -16px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 0px 65px -16px rgba(0,0,0,0.75);
+  box-shadow: 0px 0px 65px -16px rgba(0,0,0,0.75);
+}
+
 .navbar {
   border-radius: 0px;
   margin-bottom: 0px;
