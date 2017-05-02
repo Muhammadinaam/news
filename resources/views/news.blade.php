@@ -36,7 +36,7 @@
                 <hr>
 
                 <?php
-                    $latest_news = $news->category->news()->latest('news_datetime')->limit(5)->get();
+                    $latest_news = $news->category->news()->whereNotNull('published_by')->latest('news_datetime')->limit(5)->get();
                 ?>
 
                     @if( count($latest_news) > 0 )

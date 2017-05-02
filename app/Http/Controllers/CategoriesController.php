@@ -12,7 +12,12 @@ class CategoriesController extends Controller
     
     public function show($id)
     {
-    	$category = Category::find($id);
+    	$category = Category::where('id', $id)->whereNotNull('published_by')->first();
+
+        if($category == null)
+        {
+            abort(404, 'Page Not Found');
+        }
     	
     	$news_paginated = $category
 						->news()

@@ -19,4 +19,4 @@ Route::get('category/{id}', 'CategoriesController@show');
 Route::get('news/{id}', 'NewsController@show');
 
 Route::get('articles', 'ArticlesController@index');
-Route::get('article/{id}', 'ArticlesController@show');
+Route::get('articles/{id}', 'ArticlesController@show');
