@@ -855,11 +855,23 @@ class CBController extends Controller {
 		$id          = CRUDBooster::getCurrentId();
 		$id          = intval($id);
 
+
+
+		$hide_form = (Request::get('hide_form'))?unserialize(Request::get('hide_form')):array();	
+
+		
+
 		foreach($this->data_inputan as $di) {
 			$ai = array();
 			$name = $di['name'];			
 
+			if($name=='hide_form') continue;
 
+			if(count($hide_form)) {
+				if(in_array($name, $hide_form)) {
+					continue;
+				}
+			}
 
 			//if( !isset($request_all[$name]) ) continue;
 
@@ -874,6 +886,10 @@ class CBController extends Controller {
 					$row = DB::table($this->table)->where($this->primary_key,$id)->first();
 					if($row->{$di['name']}=='') {
 						$ai[] = 'required';
+					}
+					else
+					{
+						$di['validation'] = str_replace('required', '', $di['validation']);
 					}
 				}
 			}
@@ -896,6 +912,7 @@ class CBController extends Controller {
 			if($di['type']=='money') {
 				$request_all[$name] = preg_replace('/[^\d-]+/', '', $request_all[$name]);
 			}
+
 
 
 			if(@$di['validation']) {

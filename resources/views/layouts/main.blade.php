@@ -168,7 +168,7 @@
   
     <table style="width: 100%;background-color: #6171e8;">
       <tr>
-        <td style="width: 10%;"><img style="width: 100%; min-width: 100px; padding: 5px;" src="{{asset('images/logo.jpg')}}"></td>
+        <td style="width: 10%;"><img style="width: 100%; min-width: 100px; padding: 5px;" src="{{asset('images/logo.gif')}}"></td>
         <td style="width: 90%; color: white; padding: 10px;">
 
           <h3>
